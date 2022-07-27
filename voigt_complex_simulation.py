@@ -1,3 +1,7 @@
+"""
+Authors: Nicolás Cardiel (UCM) and Maite Ceballos (IFCA)
+Copyright 2021-2022
+"""
 import datetime
 from lmfit import minimize, Parameters, fit_report
 import matplotlib.pyplot as plt

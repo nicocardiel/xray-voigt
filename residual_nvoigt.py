@@ -1,3 +1,7 @@
+"""
+Authors: Nicolás Cardiel (UCM) and Maite Ceballos (IFCA)
+Copyright 2021-2022
+"""
 from ecdf_nvoigt import ecdf_nvoigt
 
 

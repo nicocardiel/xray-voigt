@@ -1,6 +1,7 @@
 """Simulate Voigt complexes.
 
-Authors: Nicolás Cardiel and Maite Ceballos
+Authors: Nicolás Cardiel (UCM) and Maite Ceballos (IFCA)
+Copyright 2021-2022
 """
 
 import argparse
