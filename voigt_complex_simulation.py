@@ -59,6 +59,8 @@ class VoigtComplexSimulation:
         self.xmin = xmin
         self.xmax = xmax
         self.nsampling = nsampling
+        if rng is None:
+            raise ValueError('Undefined rng parameter')
 
         sigma = fwhm_g / factor_sigma_fwhm
         xrange = xmax - xmin
