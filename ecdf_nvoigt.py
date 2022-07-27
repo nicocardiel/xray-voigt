@@ -6,7 +6,7 @@ from voigt_cdf_approx import voigt_cdf_approx
 
 
 def ecdf_nvoigt(data, vcd, params, modellabel='model', plot=True, alpha=1.0,
-                xlabel='energy', figsizex=6, figsizey=4):
+                xlabel='Energy', figsizex=6, figsizey=4, pdfoutput=None):
     """Compute empirical and model CDF.
 
     Parameters
@@ -29,6 +29,8 @@ def ecdf_nvoigt(data, vcd, params, modellabel='model', plot=True, alpha=1.0,
         Figure size in X direction (inches).
     figsizey : float
         Figure size in Y direction (inches).
+    pdfoutput : str or None
+        Name of the PDF file to store the plot.
 
     Returns
     -------
@@ -65,9 +67,12 @@ def ecdf_nvoigt(data, vcd, params, modellabel='model', plot=True, alpha=1.0,
         ax.plot(xecdf_data, yecdf_data, 'C1.', alpha=alpha, label='original data')
         ax.plot(xecdf_data, ycdf_model, 'k-', alpha=alpha, label=modellabel)
         ax.set_xlabel(xlabel)
-        ax.set_ylabel('probability')
+        ax.set_ylabel('Probability')
         ax.set_title('Cumulative Distribution Function')
         ax.legend()
+        plt.tight_layout()
+        if pdfoutput is not None:
+            plt.savefig(pdfoutput)
         plt.show()
 
     return xecdf_data, yecdf_data, ycdf_model

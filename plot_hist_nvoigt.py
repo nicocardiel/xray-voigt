@@ -4,7 +4,7 @@ from scipy.special import voigt_profile
 
 
 def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
-                     figsizex=6, figsizey=4):
+                     figsizex=6, figsizey=4, pdfoutput=None):
     """Plot histogram and overplot Voigt profiles.
 
     Parameters
@@ -25,6 +25,8 @@ def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
         Figure size in X direction (inches).
     figsizey : float
         Figure size in Y direction (inches).
+    pdfoutput : str or None
+        Name of the PDF file to store the plot.
 
     """
     ndata = len(data)
@@ -32,7 +34,8 @@ def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
     ax.hist(data, bins=nbins, density=True)
     ax.plot(data, [0] * ndata, '|', color='k', markersize=30, alpha=0.2)
     ax.set_xlabel(xlabel)
-    ax.set_ylabel('probability density')
+    ax.set_ylabel('Probability density')
+    ax.set_title(vcd.name)
 
     sigma = params['sigma'].value
     mu1 = params['mu1'].value
@@ -53,4 +56,6 @@ def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
     ax.plot(xplot, yplot, 'k-', linewidth=3, label=labelprefix + ' global')
     ax.legend()
     plt.tight_layout()
+    if pdfoutput is not None:
+        plt.savefig(pdfoutput)
     plt.show()

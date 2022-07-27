@@ -106,7 +106,9 @@ class VoigtComplexSimulation:
     def fit_nvoigt_complex(self, fwhm_g_ini=3.0, mu1_ini=5900,
                            nmax_iterations=20,
                            plots=True, nbins=200,
-                           figsizex=6, figsizey=4, verbose=True):
+                           figsizex=6, figsizey=4,
+                           savepdf=False,
+                           verbose=True):
         """Fit MnKa complex using Voigt profiles.
 
         Parameters
@@ -127,8 +129,10 @@ class VoigtComplexSimulation:
             Figure size in X direction (inches).
         figsizey : float
             Figure size in Y direction (inches).
+        savepdf : bool
+            If True, save plots in PDF format.
         verbose : bool
-            If true, print intermediate information.
+            If True, print intermediate information.
 
         Returns
         -------
@@ -155,8 +159,10 @@ class VoigtComplexSimulation:
             ax.plot(self.photons_simul, [0] * self.nphotons_simul, '|', color='k', markersize=30, alpha=0.2)
             ax.set_xlabel('Energy (eV)')
             ax.set_ylabel('Number of photons')
-            ax.set_title(f'{self.vcd.name}')
+            ax.set_title(self.vcd.name)
             plt.tight_layout()
+            if savepdf:
+                plt.savefig(f'test/hist_{self.vcd.name}.pdf')
             plt.show()
 
         # data rescaling
@@ -170,7 +176,10 @@ class VoigtComplexSimulation:
             ax.plot(datanor, [0] * ndata, '|', color='k', markersize=30, alpha=0.2)
             ax.set_xlabel('Rescaled energy')
             ax.set_ylabel('Number of photons')
+            ax.set_title(self.vcd.name)
             plt.tight_layout()
+            if savepdf:
+                plt.savefig(f'test/hist_{self.vcd.name}_rescaled.pdf')
             plt.show()
 
         # initial solution guess
@@ -183,20 +192,30 @@ class VoigtComplexSimulation:
         params.add('nright', value=0, vary=False, min=0)
 
         if plots:
+            if savepdf:
+                pdfoutput = f'test/hist_{self.vcd.name}_initial_guess.pdf'
+            else:
+                pdfoutput = None
             plot_hist_nvoigt(data=datanor, vcd=self.vcd, nbins=nbins,
                              params=params,
-                             xlabel='rescaled energy', labelprefix='initial',
-                             figsizex=figsizex, figsizey=figsizey)
+                             xlabel='Rescaled energy', labelprefix='initial',
+                             figsizex=figsizex, figsizey=figsizey,
+                             pdfoutput=pdfoutput)
 
+        pdfoutput = None
+        if plots:
+            if savepdf:
+                pdfoutput = f'test/cdf_{self.vcd.name}_initial_guess.pdf'
         xecdf_data, yecdf_data, ycdf_model = ecdf_nvoigt(
             data=datanor,
             vcd=self.vcd,
             params=params,
             modellabel='initial model',
             plot=plots,
-            xlabel='rescaled energy',
+            xlabel='Rescaled energy',
             figsizex=figsizex,
-            figsizey=figsizey
+            figsizey=figsizey,
+            pdfoutput=pdfoutput
         )
 
         # fitting computation
@@ -237,7 +256,7 @@ class VoigtComplexSimulation:
                 params=out.params,
                 modellabel='fitted model',
                 plot=plots,
-                xlabel='rescaled energy',
+                xlabel='Rescaled energy',
                 figsizex=figsizex,
                 figsizey=figsizey
             )
@@ -280,10 +299,20 @@ class VoigtComplexSimulation:
                                    columns=['value', 'stderr'])
 
         if plots:
+            if savepdf:
+                pdfoutput = f'test/hist_{self.vcd.name}_final_fit.pdf'
+            else:
+                pdfoutput = None
             plot_hist_nvoigt(data=self.photons_simul, vcd=self.vcd, nbins=nbins,
                              params=newparams,
                              xlabel='Energy (eV)', labelprefix='fitted',
-                             figsizex=figsizex, figsizey=figsizey)
+                             figsizex=figsizex, figsizey=figsizey,
+                             pdfoutput=pdfoutput)
+
+        pdfoutput = None
+        if plots:
+            if savepdf:
+                pdfoutput = f'test/cdf_{self.vcd.name}_final_fit.pdf'
         xecdf_data, yecdf_data, ycdf_model = ecdf_nvoigt(
             data=self.photons_simul,
             vcd=self.vcd,
@@ -292,7 +321,8 @@ class VoigtComplexSimulation:
             plot=plots,
             xlabel='Energy (eV)',
             figsizex=figsizex,
-            figsizey=figsizey
+            figsizey=figsizey,
+            pdfoutput=pdfoutput
         )
 
         fwhm_g = sigma * factor_sigma_fwhm
