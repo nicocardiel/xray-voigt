@@ -1,6 +1,15 @@
 # PyCharm
 .idea
 
+# mac OS
+.DS_Store
+
+# specific subdirectories and files
+test
+testsimul
+test_simulate_voigt_complex.html
+.gitignore~
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

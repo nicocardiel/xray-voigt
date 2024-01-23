@@ -109,7 +109,8 @@ class VoigtComplexSimulation:
 
     def fit_nvoigt_complex(self, fwhm_g_ini=3.0, mu1_ini=5900,
                            nmax_iterations=20,
-                           plots=True, nbins=200,
+                           plots=True, yscale_log=False, alpha_hist=1.0,
+                           nbins=200,
                            figsizex=6, figsizey=4,
                            savepdf=False,
                            verbose=True):
@@ -126,6 +127,11 @@ class VoigtComplexSimulation:
             parameters when estimating the empirical CDF.
         plots : bool
             If True, display intermediate plots.
+        yscale_log : bool
+            If True, use a logarithmic vertical scale when displaying
+            the line complex.
+        alpha_hist : float
+            Transparency value for histogram display.
         nbins : int
             Number of bins to display histograms. This number has no effect
             on the resulting fit.
@@ -159,11 +165,13 @@ class VoigtComplexSimulation:
         # display the initial set of simulated photons
         if plots:
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(figsizex, figsizey))
-            ax.hist(self.photons_simul, bins=nbins)
+            ax.hist(self.photons_simul, bins=nbins, alpha=alpha_hist)
             ax.plot(self.photons_simul, [0] * self.nphotons_simul, '|', color='k', markersize=30, alpha=0.2)
             ax.set_xlabel('Energy (eV)')
             ax.set_ylabel('Number of photons')
             ax.set_title(self.vcd.name)
+            if yscale_log:
+                ax.set_yscale('log')
             plt.tight_layout()
             if savepdf:
                 plt.savefig(f'test/hist_{self.vcd.name}.pdf')
@@ -176,11 +184,13 @@ class VoigtComplexSimulation:
         # display rescaled data
         if plots:
             fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(figsizex, figsizey))
-            ax.hist(datanor, bins=nbins)
+            ax.hist(datanor, bins=nbins, alpha=alpha_hist)
             ax.plot(datanor, [0] * ndata, '|', color='k', markersize=30, alpha=0.2)
             ax.set_xlabel('Rescaled energy')
             ax.set_ylabel('Number of photons')
             ax.set_title(self.vcd.name)
+            if yscale_log:
+                ax.set_yscale('log')
             plt.tight_layout()
             if savepdf:
                 plt.savefig(f'test/hist_{self.vcd.name}_rescaled.pdf')
@@ -204,6 +214,7 @@ class VoigtComplexSimulation:
                              params=params,
                              xlabel='Rescaled energy', labelprefix='initial',
                              figsizex=figsizex, figsizey=figsizey,
+                             yscale_log=yscale_log, alpha_hist=alpha_hist,
                              pdfoutput=pdfoutput)
 
         pdfoutput = None
@@ -218,7 +229,7 @@ class VoigtComplexSimulation:
             plot=plots,
             xlabel='Rescaled energy',
             figsizex=figsizex,
-            figsizey=figsizey,
+            figsizey=figsizey*2/3,
             pdfoutput=pdfoutput
         )
 
@@ -252,7 +263,8 @@ class VoigtComplexSimulation:
                 plot_hist_nvoigt(data=datanor, vcd=self.vcd, nbins=nbins,
                                  params=out.params,
                                  xlabel='rescaled energy', labelprefix='fitted',
-                                 figsizex=figsizex, figsizey=figsizey)
+                                 figsizex=figsizex, figsizey=figsizey,
+                                 yscale_log=yscale_log, alpha_hist=alpha_hist)
 
             xecdf_data, yecdf_data, ycdf_model = ecdf_nvoigt(
                 data=datanor,
@@ -262,7 +274,7 @@ class VoigtComplexSimulation:
                 plot=plots,
                 xlabel='Rescaled energy',
                 figsizex=figsizex,
-                figsizey=figsizey
+                figsizey=figsizey*2/3
             )
 
             if verbose:
@@ -311,6 +323,7 @@ class VoigtComplexSimulation:
                              params=newparams,
                              xlabel='Energy (eV)', labelprefix='fitted',
                              figsizex=figsizex, figsizey=figsizey,
+                             yscale_log=yscale_log, alpha_hist=alpha_hist,
                              pdfoutput=pdfoutput)
 
         pdfoutput = None
@@ -325,7 +338,7 @@ class VoigtComplexSimulation:
             plot=plots,
             xlabel='Energy (eV)',
             figsizex=figsizex,
-            figsizey=figsizey,
+            figsizey=figsizey*2/3,
             pdfoutput=pdfoutput
         )
 

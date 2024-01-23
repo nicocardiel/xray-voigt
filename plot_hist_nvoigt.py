@@ -8,7 +8,8 @@ from scipy.special import voigt_profile
 
 
 def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
-                     figsizex=6, figsizey=4, pdfoutput=None):
+                     figsizex=6, figsizey=4, yscale_log=False, alpha_hist=1.0,
+                     pdfoutput=None):
     """Plot histogram and overplot Voigt profiles.
 
     Parameters
@@ -29,17 +30,22 @@ def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
         Figure size in X direction (inches).
     figsizey : float
         Figure size in Y direction (inches).
+    yscale_log : bool
+        If True, use a logarithmic vertical scale when displaying
+        the line complex.
+    alpha_hist : float
+        Transparency value for histogram display.
     pdfoutput : str or None
         Name of the PDF file to store the plot.
 
     """
     ndata = len(data)
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(figsizex, figsizey))
-    ax.hist(data, bins=nbins, density=True)
+    ax.hist(data, bins=nbins, density=True, alpha=alpha_hist)
     ax.plot(data, [0] * ndata, '|', color='k', markersize=30, alpha=0.2)
     ax.set_xlabel(xlabel)
     ax.set_ylabel('Probability density')
-    ax.set_title(vcd.name)
+    #ax.set_title(vcd.name)
 
     sigma = params['sigma'].value
     mu1 = params['mu1'].value
@@ -58,7 +64,13 @@ def plot_hist_nvoigt(data, vcd, nbins, params, xlabel='x', labelprefix='',
         ax.plot(xplot, ydum, label=labelprefix + ' voigt{}'.format(iline + 1))
         yplot = yplot + ydum
     ax.plot(xplot, yplot, 'k-', linewidth=3, label=labelprefix + ' global')
-    ax.legend()
+    if vcd.name == 'MnKa':
+        title_legend = r'MnK$\alpha$'
+    else:
+        title_legend = vcd.name
+    ax.legend(loc=2, fontsize=12, title=title_legend)
+    if yscale_log:
+        ax.set_yscale('log')
     plt.tight_layout()
     if pdfoutput is not None:
         plt.savefig(pdfoutput)
